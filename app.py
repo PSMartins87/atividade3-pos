@@ -45,16 +45,27 @@ df_filtrado = df[(df['Ano'].isin(ano_selecionado)) & (df['Grupo'].isin(grupos))]
 
 # Visuais
 col1, col2 = st.columns(2)
+col3, col4 = st.columns(2)
 
 with col1:
-    st.subheader("Evolução Temporal")
+    st.subheader("Evolução Temporal (Linhas)")
     fig1 = px.line(df_filtrado.groupby(['Ano', 'Mes'])['Valor'].sum().reset_index(), x='Mes', y='Valor', color='Ano')
     st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
-    st.subheader("Composição por Grupo")
+    st.subheader("Composição por Grupo (Pizza)")
     fig2 = px.pie(df_filtrado, values='Valor', names='Grupo')
     st.plotly_chart(fig2, use_container_width=True)
+
+with col3:
+    st.subheader("Total Arrecadado por Grupo (Barras)")
+    fig3 = px.bar(df_filtrado.groupby('Grupo')['Valor'].sum().reset_index(), x='Grupo', y='Valor', color='Grupo')
+    st.plotly_chart(fig3, use_container_width=True)
+
+with col4:
+    st.subheader("Total por Ano (Barras Horizontais)")
+    fig4 = px.bar(df_filtrado.groupby('Ano')['Valor'].sum().reset_index(), x='Valor', y='Ano', orientation='h', color='Ano')
+    st.plotly_chart(fig4, use_container_width=True)
 
 st.metric("Total Acumulado no Período", f"R$ {df_filtrado['Valor'].sum():,.2f}")
 st.dataframe(df_filtrado)
